@@ -1,7 +1,6 @@
 @echo off
+setlocal
 
-echo 1
-REM ========= CONFIG (edit these) =========
 set "ABCS_PATH=..\AbcSolutionsCSharp\Abcs"
 set "SMDB_PATH=."
 set "ABCS_REMOTE_URL=https://github.com/hbruckman/AbcSolutionsCSharp.git"
@@ -9,55 +8,40 @@ set "ABCS_BRANCH=main"
 set "SMDB_BRANCH=main"
 set "REMOTE_NAME=abcs"
 set "PREFIX=Abcs"
-REM =======================================
-echo 2
+
 if "%~1"=="" (
-  echo Usage: %~nx0 "Commit message"
+  echo Usage: %~nx0 "Commit message for Abcs"
   exit /b 1
 )
-echo 3
+
 set "MESSAGE=%~1"
-echo 4
+echo === Sync Abcs into Smdb (subtree, squashed) ===
 pushd "%SMDB_PATH%" || (echo ERROR: Smdb path not found & exit /b 1)
 
-REM === Check if the subtree remote already exists ===
-echo 5
 git remote get-url %REMOTE_NAME% >nul 2>&1
-if errorlevel 1 goto FIRST_RUN
-goto SYNC
 
-:FIRST_RUN
-  echo 7a
-  echo === [1/1] First run: add Abcs as subtree \(squashed\) and hide locally ===
-  git remote add %REMOTE_NAME% "%ABCS_REMOTE_URL%"
-  git fetch %REMOTE_NAME%
-  git checkout %SMDB_BRANCH%
-	git add -A
-	git commit -m "%MESSAGE%"
-  git subtree add --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash || (echo ERROR: Subtree add failed & popd & exit /b 1)
-  git push origin %SMDB_BRANCH% || (echo ERROR: Push Smdb failed & popd & exit /b 1)
+if errorlevel 1 git remote add %REMOTE_NAME% "%ABCS_REMOTE_URL%"
 
-  REM Hide the subtree folder from the working tree (won’t show in VS Code)
-  git sparse-checkout init --cone
-  git sparse-checkout set --no-cone "/*" "!/%PREFIX%/"
-  goto END
+git fetch %REMOTE_NAME% || (echo ERROR: fetch failed & popd & exit /b 1)
+git checkout %SMDB_BRANCH% || (echo ERROR: checkout failed & popd & exit /b 1)
+git add -A
+git rev-parse --verify --quiet HEAD:%PREFIX% >nul 2>&1
 
-:SYNC
-  echo 7b
-  echo === [1/1] Sync (pull) Abcs into Smdb subtree \(squashed\) ===
-  git fetch %REMOTE_NAME%
-  git checkout %SMDB_BRANCH%
-	git add -A
-	git commit -m "%MESSAGE%"
-  git subtree pull --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash || (echo ERROR: Subtree pull failed & popd & exit /b 1)
-  git push origin %SMDB_BRANCH% || (echo ERROR: Push Smdb failed & popd & exit /b 1)
+if errorlevel 1 (
+  echo First time: subtree add "%PREFIX%" [squashed]...
+  git subtree add --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash || (echo ERROR: subtree add failed & popd & exit /b 1)
+) else (
+  echo Updating: subtree pull into "%PREFIX%" [squashed]...
+  git subtree pull --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash || (echo ERROR: subtree pull failed & popd & exit /b 1)
+)
 
-  REM Keep the subtree hidden locally
-  git sparse-checkout set --no-cone "/*" "!/%PREFIX%/"
-  goto END
+git push origin %SMDB_BRANCH% || (echo ERROR: push failed & popd & exit /b 1)
 
-:END
-echo 8
+REM Keep subtree hidden locally (safe to run every time)
+git sparse-checkout init --cone >nul 2>&1
+git sparse-checkout set --no-cone "/*" "!/%PREFIX%/"
+
 popd
 echo.
 echo Done.
+endlocal
