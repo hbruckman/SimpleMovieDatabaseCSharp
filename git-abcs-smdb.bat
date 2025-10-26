@@ -25,22 +25,27 @@ if errorlevel 1 git remote add %REMOTE_NAME% "%ABCS_REMOTE_URL%"
 git fetch %REMOTE_NAME% || (echo ERROR: fetch failed & popd & exit /b 1)
 git checkout %SMDB_BRANCH% || (echo ERROR: checkout failed & popd & exit /b 1)
 git add -A
+git commit -m "%MESSAGE%"
+git sparse-checkout init --cone >nul 2>&1
+git sparse-checkout set --no-cone "/*" "/%PREFIX%/**" >nul 2>&1
 git rev-parse --verify --quiet HEAD:%PREFIX% >nul 2>&1
+if errorlevel 1 goto FIRST_RUN
+goto SYNC
 
-if errorlevel 1 (
-  echo First time: subtree add "%PREFIX%" [squashed]...
-  git subtree add --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash || (echo ERROR: subtree add failed & popd & exit /b 1)
-) else (
-  echo Updating: subtree pull into "%PREFIX%" [squashed]...
-  git subtree pull --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash || (echo ERROR: subtree pull failed & popd & exit /b 1)
-)
+:FIRST_RUN
+echo First run.
+git subtree add --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash || (echo ERROR: subtree add failed & popd & exit /b 1)
+goto END
 
+:SYNC
+echo Sync run.
+git subtree pull --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash || (echo ERROR: subtree pull failed & popd & exit /b 1)
 git push origin %SMDB_BRANCH% || (echo ERROR: push failed & popd & exit /b 1)
-
-REM Keep subtree hidden locally (safe to run every time)
 git sparse-checkout init --cone >nul 2>&1
 git sparse-checkout set --no-cone "/*" "!/%PREFIX%/"
+goto END
 
+:END
 popd
 echo.
 echo Done.
