@@ -23,7 +23,10 @@ pushd "%SMDB_PATH%" || (echo ERROR: Smdb path not found & exit /b 1)
 REM === Check if the subtree remote already exists ===
 echo 5
 git remote get-url %REMOTE_NAME% >nul 2>&1
-if errorlevel neq 0 (
+if errorlevel 1 goto FIRST_RUN
+goto SYNC
+
+:FIRST_RUN
   echo 7a
   echo === [1/1] First run: add Abcs as subtree \(squashed\) and hide locally ===
   git remote add %REMOTE_NAME% "%ABCS_REMOTE_URL%"
@@ -37,7 +40,9 @@ if errorlevel neq 0 (
   REM Hide the subtree folder from the working tree (won’t show in VS Code)
   git sparse-checkout init --cone
   git sparse-checkout set --no-cone "/*" "!/%PREFIX%/"
-) else (
+  goto END
+
+:SYNC
   echo 7b
   echo === [1/1] Sync (pull) Abcs into Smdb subtree \(squashed\) ===
   git fetch %REMOTE_NAME%
@@ -49,7 +54,9 @@ if errorlevel neq 0 (
 
   REM Keep the subtree hidden locally
   git sparse-checkout set --no-cone "/*" "!/%PREFIX%/"
-)
+  goto END
+
+:END
 echo 8
 popd
 echo.
