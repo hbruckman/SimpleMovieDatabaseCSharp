@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\AbcSolutionsCSharp\Abcs\Abcs.csproj" />
+    <ProjectReference Include="..\Smdb.Core\Smdb.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
