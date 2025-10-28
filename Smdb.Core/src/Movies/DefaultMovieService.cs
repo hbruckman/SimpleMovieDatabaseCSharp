@@ -1,7 +1,7 @@
-using System.Net;
-using Smdb.Core.Shared;
-
 namespace Smdb.Core.Movies;
+
+using Abcs.Http;
+using System.Net;
 
 public class DefaultMovieService : IMovieService
 {
@@ -19,7 +19,7 @@ public class DefaultMovieService : IMovieService
 			var pagedResult = await movieRepository.ReadMovies(page, size);
 			var result = pagedResult == null ?
 				new Result<PagedResult<Movie>>(new Exception("Could not read movies."), (int) HttpStatusCode.NotFound) :
-				new Result<PagedResult<Movie>>(pagedResult);
+				new Result<PagedResult<Movie>>(pagedResult, (int) HttpStatusCode.OK);
 
 			return result;
 		}
@@ -36,7 +36,7 @@ public class DefaultMovieService : IMovieService
 			var movie = await movieRepository.CreateMovie(newMovie);
 			var result = movie == null ?
 				new Result<Movie>(new Exception("Could not create movie."), (int) HttpStatusCode.NotFound) :
-				new Result<Movie>(movie);
+				new Result<Movie>(movie, (int) HttpStatusCode.Created);
 
 			return result;
 		}
@@ -53,7 +53,7 @@ public class DefaultMovieService : IMovieService
 			var movie = await movieRepository.ReadMovie(id);
 			var result = movie == null ?
 				new Result<Movie>(new Exception("Could not read movie."), (int) HttpStatusCode.NotFound) :
-				new Result<Movie>(movie);
+				new Result<Movie>(movie, (int) HttpStatusCode.OK);
 
 			return result;
 		}
@@ -70,7 +70,7 @@ public class DefaultMovieService : IMovieService
 			var movie = await movieRepository.UpdateMovie(id, newData);
 			var result = movie == null ?
 				new Result<Movie>(new Exception("Could not update movie."), (int) HttpStatusCode.NotFound) :
-				new Result<Movie>(movie);
+				new Result<Movie>(movie, (int) HttpStatusCode.OK);
 
 			return result;
 		}
@@ -87,7 +87,7 @@ public class DefaultMovieService : IMovieService
 			var movie = await movieRepository.DeleteMovie(id);
 			var result = movie == null ?
 				new Result<Movie>(new Exception("Could not delete movie."), (int) HttpStatusCode.NotFound) :
-				new Result<Movie>(movie);
+				new Result<Movie>(movie, (int) HttpStatusCode.OK);
 
 			return result;
 		}

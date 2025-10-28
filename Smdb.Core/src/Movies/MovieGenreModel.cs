@@ -10,4 +10,9 @@ public class MovieGenre
 		MovieId = movieId;
 		GenreId = genreId;
 	}
+
+	public override string ToString()
+	{
+		return $"MovieGenre[MovieId={MovieId}, GenreId={GenreId}]";
+	}
 }

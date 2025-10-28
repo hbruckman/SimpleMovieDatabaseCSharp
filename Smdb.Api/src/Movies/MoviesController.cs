@@ -1,12 +1,10 @@
+namespace Smdb.Api.Movies;
+
 using System.Collections;
 using System.Net;
 using System.Text.Json;
 using Abcs.Http;
-using Smdb.Core;
 using Smdb.Core.Movies;
-using Smdb.Core.Shared;
-
-namespace Smdb.Api.Movies;
 
 public class MoviesController
 {
@@ -25,8 +23,8 @@ public class MoviesController
 
 		var result = await movieService.ReadMovies(page, size);
 
-		await PrepareResponse(req, res, props, result);
-
+		await JsonUtils.SendPagedResultResponse(req, res, props, result, page, size);
+		
 		await next();
 	}
 
@@ -37,7 +35,7 @@ public class MoviesController
 		var movie = JsonSerializer.Deserialize<Movie>(text, JsonUtils.DefaultOptions);
 		var result = await movieService.CreateMovie(movie!);
 
-		await PrepareResponse(req, res, props, result);
+		await JsonUtils.SendResultResponse(req, res, props, result);
 
 		await next();
 	}
@@ -50,7 +48,7 @@ public class MoviesController
 
 		var result = await movieService.ReadMovie(id);
 
-		await PrepareResponse(req, res, props, result);
+		await JsonUtils.SendResultResponse(req, res, props, result);
 
 		await next();
 	}
@@ -64,7 +62,7 @@ public class MoviesController
 		var movie = JsonSerializer.Deserialize<Movie>(text, JsonUtils.DefaultOptions);
 		var result = await movieService.UpdateMovie(id, movie!);
 
-		await PrepareResponse(req, res, props, result);
+		await JsonUtils.SendResultResponse(req, res, props, result);
 
 		await next();
 	}
@@ -77,19 +75,8 @@ public class MoviesController
 
 		var result = await movieService.DeleteMovie(id);
 
-		await PrepareResponse(req, res, props, result);
+		await JsonUtils.SendResultResponse(req, res, props, result);
 
 		await next();
-	}
-
-	private async Task PrepareResponse<T>(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Result<T> result)
-	{
-		if(result.IsError)
-		{
-			await HttpUtils.SendResponse(req, res, props, result.StatusCode, JsonSerializer.Serialize(result.Error!, JsonUtils.DefaultOptions));
-			return;
-		}
-
-		await HttpUtils.SendResponse(req, res, props, result.StatusCode, JsonSerializer.Serialize(result.Payload!, JsonUtils.DefaultOptions));
 	}
 }

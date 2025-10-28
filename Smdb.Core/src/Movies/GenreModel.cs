@@ -10,4 +10,9 @@ public class Genre
 		Id = id;
 		Name = name;
 	}
+
+	public override string ToString()
+	{
+		return $"Genre[Id={Id}, Name={Name}]";
+	}
 }
