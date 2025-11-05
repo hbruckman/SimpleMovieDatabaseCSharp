@@ -1,0 +1,16 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": ".NET Core Launch (Smdb.Api)",
+			"type": "coreclr",
+			"request": "launch",
+			"program": "${workspaceFolder}/Smdb.Api/bin/Debug/net9.0/Smdb.Api.dll",
+			"cwd": "${workspaceFolder}/Smdb.Api",
+			"preLaunchTask": "build Smdb.Api",
+			"args": [],
+			"console": "integratedTerminal"
+		}
+	],
+	"compounds": []
+}

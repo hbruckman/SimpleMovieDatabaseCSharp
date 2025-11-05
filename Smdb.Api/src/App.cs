@@ -1,5 +1,6 @@
 namespace Smdb.Api;
 
+using Abcs.Config;
 using Abcs.Http;
 using Smdb.Api.Movies;
 using Smdb.Core.Movies;
@@ -20,13 +21,21 @@ public class App
 
 		router = new HttpRouter();
 		router.Use(HttpUtils.CentralizedErrorHandling);
+		router.Use(HttpUtils.ParseRequestUrl);
+		router.Use(HttpUtils.ParseRequestQueryString);
+		router.Use(HttpUtils.StructuredLogging);
+		router.UseDefaultResponse();
 		router.UseRouteMatching();
 		router.UseRouter("/movies", mRouter);
 
-		string host = "http://localhost:8080/";
+		string host = Configuration.Get<string>("HOST", "http://127.0.0.1");
+		string port = Configuration.Get<string>("PORT", "5000");
+		string authority = $"{host}:{port}/";
+
 		server = new HttpListener();
-		server.Prefixes.Add(host);
-		Console.WriteLine("Server started at " + host + "movies");
+		server.Prefixes.Add(authority);
+
+		Console.WriteLine("Server started at " + authority);
 	}
 
 	public async Task Start()
