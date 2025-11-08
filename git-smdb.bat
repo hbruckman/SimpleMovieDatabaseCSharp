@@ -1,24 +1,22 @@
 @echo off
 setlocal
 
-set "ABCS_PATH=..\AbcSolutionsCSharp"
+set "ABCS_PATH=..\AbcSolutionsCSharp\src"
 set "SMDB_PATH=."
 set "ABCS_REMOTE_URL=https://github.com/hbruckman/AbcSolutionsCSharp.git"
 set "ABCS_BRANCH=main"
 set "SMDB_BRANCH=main"
 set "REMOTE_NAME=abcs"
 set "PREFIX=src"
-set "REMOTE_SUBDIR=src"
-set "SUBTREE_REF=%ABCS_BRANCH%:%REMOTE_SUBDIR%"
-set "SUBTREE_MSG=Sync %REMOTE_SUBDIR% from %REMOTE_NAME%/%ABCS_BRANCH% into %PREFIX%"
+set "SUBTREE_MSG=Sync %PREFIX% from %REMOTE_NAME%/%ABCS_BRANCH% [squashed]"
 
 if "%~1"=="" (
-  echo Usage: %~nx0 "Commit message for SMDB"
+  echo Usage: %~nx0 "Commit message for Abcs"
   exit /b 1
 )
 
 set "MESSAGE=%~1"
-echo === Sync AbcSolutionsCSharp:%REMOTE_SUBDIR% into SMDB:%PREFIX% (subtree, squashed) ===
+echo === Sync Abcs into Smdb (subtree, squashed) ===
 pushd "%SMDB_PATH%" || (echo ERROR: Smdb path not found & exit /b 1)
 
 git remote get-url %REMOTE_NAME% >nul 2>&1
@@ -36,18 +34,17 @@ if errorlevel 1 goto FIRST_RUN
 goto SYNC
 
 :FIRST_RUN
-echo First run: adding %REMOTE_NAME%/%SUBTREE_REF% under %PREFIX%
-git subtree add --prefix="%PREFIX%" %REMOTE_NAME% "%ABCS_BRANCH%" --squash -m "%SUBTREE_MSG%" || (echo ERROR: subtree add failed & popd & exit /b 1)
-goto POST_SYNC
+echo First run.
+git subtree add --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash -m "%SUBTREE_MSG%" || (echo ERROR: subtree add failed & popd & exit /b 1)
+goto END
 
 :SYNC
-echo Sync run: pulling %REMOTE_NAME%/%SUBTREE_REF% into %PREFIX%
-git subtree pull --prefix="%PREFIX%" %REMOTE_NAME% "%ABCS_BRANCH%" --squash -m "%SUBTREE_MSG%" || (echo ERROR: subtree pull failed & popd & exit /b 1)
-
-:POST_SYNC
+echo Sync run.
+git subtree pull --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash -m "%SUBTREE_MSG%" || (echo ERROR: subtree pull failed & popd & exit /b 1)
 git push origin %SMDB_BRANCH% || (echo ERROR: push failed & popd & exit /b 1)
 git sparse-checkout init --cone >nul 2>&1
 git sparse-checkout set --no-cone "/*" "!/%PREFIX%/"
+goto END
 
 :END
 popd
