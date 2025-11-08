@@ -31,16 +31,18 @@ git sparse-checkout init --cone >nul 2>&1
 git sparse-checkout set --no-cone "/*" "/%PREFIX%/**" >nul 2>&1
 git rev-parse --verify --quiet HEAD:%PREFIX% >nul 2>&1
 if errorlevel 1 goto FIRST_RUN
-goto SYNC
+rem goto SYNC
 
 :FIRST_RUN
 echo First run.
 git subtree add --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash -m "%SUBTREE_MSG%" || (echo ERROR: subtree add failed & popd & exit /b 1)
-goto END
+goto POST_SYNC
 
 :SYNC
 echo Sync run.
 git subtree pull --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash -m "%SUBTREE_MSG%" || (echo ERROR: subtree pull failed & popd & exit /b 1)
+
+:POST_SYNC
 git push origin %SMDB_BRANCH% || (echo ERROR: push failed & popd & exit /b 1)
 git sparse-checkout init --cone >nul 2>&1
 git sparse-checkout set --no-cone "/*" "!/%PREFIX%/"
