@@ -1,13 +1,13 @@
 @echo off
 setlocal
 
-set "ABCS_PATH=..\AbcSolutionsCSharp\src"
+set "ABCS_PATH=..\AbcSolutionsCSharp\src\Abcs"
 set "SMDB_PATH=."
 set "ABCS_REMOTE_URL=https://github.com/hbruckman/AbcSolutionsCSharp.git"
 set "ABCS_BRANCH=main"
 set "SMDB_BRANCH=main"
 set "REMOTE_NAME=abcs"
-set "PREFIX=src"
+set "PREFIX=src/Abcs"
 set "SUBTREE_MSG=Sync %PREFIX% from %REMOTE_NAME%/%ABCS_BRANCH% [squashed]"
 
 if "%~1"=="" (
@@ -31,7 +31,7 @@ git sparse-checkout init --cone >nul 2>&1
 git sparse-checkout set --no-cone "/*" "/%PREFIX%/**" >nul 2>&1
 git rev-parse --verify --quiet HEAD:%PREFIX% >nul 2>&1
 if errorlevel 1 goto FIRST_RUN
-rem goto SYNC
+goto SYNC
 
 :FIRST_RUN
 echo First run.
