@@ -90,11 +90,11 @@ public static class HttpUtils
 		await next();
 	}
 
-	public static async Task ReadRequestBodyAsBytes(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
+	public static async Task ReadRequestBodyAsBlob(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
 		using var ms = new MemoryStream();
 		await req.InputStream.CopyToAsync(ms);
-		props["req.body"] = ms.ToArray();
+		props["req.blob"] = ms.ToArray();
 
 		await next();
 	}
@@ -212,9 +212,9 @@ public static class HttpUtils
 		catch(Exception e)
 		{
 			int code = (int) HttpStatusCode.InternalServerError;
-			string message = Environment.GetEnvironmentVariable("DEPLOYMENT_MODE") == "development"
-				? e.ToString()
-				: "An unexpected error occurred.";
+			string message = Environment.GetEnvironmentVariable("DEPLOYMENT_MODE") == "production"
+				? "An unexpected error occurred."
+				: e.ToString();
 
 			await SendResponse(req, res, props, code, message, "text/plain");
 		}
