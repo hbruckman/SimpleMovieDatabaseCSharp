@@ -1,55 +1,64 @@
 @echo off
-setlocal
+setlocal EnableDelayedExpansion
 
-set "ABCS_PATH=..\AbcSolutionsCSharp\src\Abcs"
-set "SMDB_PATH=."
-set "ABCS_REMOTE_URL=https://github.com/hbruckman/AbcSolutionsCSharp.git"
-set "ABCS_BRANCH=main"
-set "SMDB_BRANCH=main"
-set "REMOTE_NAME=abcs"
-set "PREFIX=src/Abcs"
-set "SUBTREE_MSG=Sync %PREFIX% from %REMOTE_NAME%/%ABCS_BRANCH% [squashed]"
+set "A_PATH=..\AbcSolutionsCSharp"
+set "A_BRANCH=main"
+set "A_FOLDERS=Config;Http"
+set "B_PATH=."
 
-if "%~1"=="" (
-  echo Usage: %~nx0 "Commit message for Abcs"
-  exit /b 1
+echo =====================================================
+echo  Importing selected folders from A into B via subtree
+echo =====================================================
+
+rem === STEP 1: In A, (re)create split branches for each folder ===
+pushd "%A_PATH%"
+git checkout %A_BRANCH% >nul 2>&1
+
+for %%F in (%A_FOLDERS%) do (
+    echo [A] Creating subtree branch for src/%%F ...
+    git branch -D src-%%F 2>nul
+    git subtree split --prefix=src/%%F -b src-%%F >nul
+)
+popd
+
+rem === STEP 2: In B, add subtree for each folder ===
+pushd "%B_PATH%"
+git switch -c vendoring/a-folders 2>nul || git switch vendoring/a-folders >nul 2>&1
+
+git remote remove A 2>nul
+git remote add A "%A_PATH%"
+git fetch A >nul
+
+for %%F in (%A_FOLDERS%) do (
+    echo [B] Importing A/src/%%F into B/src/%%F ...
+    git subtree add --prefix=src/%%F A src-%%F --squash -m "import A/src/%%F"
 )
 
-set "MESSAGE=%~1"
-echo === Sync Abcs into Smdb (subtree, squashed) ===
-pushd "%SMDB_PATH%" || (echo ERROR: Smdb path not found & exit /b 1)
+rem === STEP 3: Sparse-checkout hide A’s folders ===
+echo [B] Configuring sparse-checkout to hide A's folders...
+git sparse-checkout init --no-cone >nul 2>&1
+> .git\info\sparse-checkout echo /*
 
-git remote get-url %REMOTE_NAME% >nul 2>&1
+for %%F in (%A_FOLDERS%) do (
+    echo !/src/%%F/**>> .git\info\sparse-checkout
+)
+git read-tree -mu HEAD >nul
 
-if errorlevel 1 git remote add %REMOTE_NAME% "%ABCS_REMOTE_URL%"
+rem === STEP 4: Physically delete the hidden folders from disk (not from Git) ===
+echo [B] Removing hidden folders from working tree...
+for %%F in (%A_FOLDERS%) do (
+    if exist "src\%%F" (
+        echo     Deleting src\%%F ...
+        rmdir /s /q "src\%%F"
+    )
+)
 
-git fetch %REMOTE_NAME% || (echo ERROR: fetch failed & popd & exit /b 1)
-git checkout %SMDB_BRANCH% || (echo ERROR: checkout failed & popd & exit /b 1)
-git add -A
-git commit -m "%MESSAGE%"
-git sparse-checkout init --cone >nul 2>&1
-git sparse-checkout set --no-cone "/*" "/%PREFIX%/**" >nul 2>&1
-git rev-parse --verify --quiet HEAD:%PREFIX% >nul 2>&1
-if errorlevel 1 goto FIRST_RUN
-goto SYNC
-
-:FIRST_RUN
-echo First run.
-git subtree add --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash -m "%SUBTREE_MSG%" || (echo ERROR: subtree add failed & popd & exit /b 1)
-goto POST_SYNC
-
-:SYNC
-echo Sync run.
-git subtree pull --prefix "%PREFIX%" %REMOTE_NAME% %ABCS_BRANCH% --squash -m "%SUBTREE_MSG%" || (echo ERROR: subtree pull failed & popd & exit /b 1)
-
-:POST_SYNC
-git push origin %SMDB_BRANCH% || (echo ERROR: push failed & popd & exit /b 1)
-git sparse-checkout init --cone >nul 2>&1
-git sparse-checkout set --no-cone "/*" "!/%PREFIX%/"
-goto END
-
-:END
 popd
+
 echo.
+echo =====================================================
 echo Done.
-endlocal
+echo Imported folders: %A_FOLDERS%
+echo A's folders are hidden and deleted locally, but still tracked in Git.
+echo To show them again: git sparse-checkout disable
+echo =====================================================
