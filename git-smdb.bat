@@ -1,14 +1,14 @@
 @echo off
 setlocal
 
-set "ABCS_PATH=..\AbcSolutionsCSharp\Abcs"
+set "ABCS_PATH=..\AbcSolutionsCSharp"
 set "SMDB_PATH=."
 set "ABCS_REMOTE_URL=https://github.com/hbruckman/AbcSolutionsCSharp.git"
 set "ABCS_BRANCH=main"
 set "SMDB_BRANCH=main"
 set "REMOTE_NAME=abcs"
-set "PREFIX=Abcs"
-set "SUBTREE_MSG=Sync %PREFIX% from %REMOTE_NAME%/%ABCS_BRANCH% [squashed]"
+set "PREFIX=src/Abcs"
+set "SUBTREE_MSG=Sync %PREFIX% from %REMOTE_NAME%/%ABCS_BRANCH%"
 
 if "%~1"=="" (
   echo Usage: %~nx0 "Commit message for Abcs"
