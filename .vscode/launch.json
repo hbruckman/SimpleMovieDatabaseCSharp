@@ -5,8 +5,8 @@
 			"name": ".NET Core Launch (Smdb.Api)",
 			"type": "coreclr",
 			"request": "launch",
-			"program": "${workspaceFolder}/Smdb.Api/bin/Debug/net9.0/Smdb.Api.dll",
-			"cwd": "${workspaceFolder}/Smdb.Api",
+			"program": "${workspaceFolder}/src/Smdb.Api/bin/Debug/net9.0/Smdb.Api.dll",
+			"cwd": "${workspaceFolder}/src/Smdb.Api",
 			"preLaunchTask": "build Smdb.Api",
 			"args": [],
 			"console": "integratedTerminal"

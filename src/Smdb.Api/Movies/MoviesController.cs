@@ -1,6 +1,7 @@
 namespace Smdb.Api.Movies;
 
 using System.Collections;
+using System.Collections.Specialized;
 using System.Net;
 using System.Text.Json;
 using Abcs.Http;
@@ -43,8 +44,8 @@ public class MoviesController
 	// curl -X GET "http://localhost:8080/movies/1"
 	public async Task ReadMovie(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
-		var uParams = (Hashtable) props["urlParams"]!;
-		int id = int.TryParse((string) uParams["id"]!, out int i) ? i : -1;
+		var uParams = (NameValueCollection) props["urlParams"]!;
+		int id = int.TryParse(uParams["id"]!, out int i) ? i : -1;
 
 		var result = await movieService.ReadMovie(id);
 
@@ -56,8 +57,8 @@ public class MoviesController
 	// curl -X PUT "http://localhost:8080/movies/1" -H "Content-Type: application/json" -d "{ \"title\": \"Joker 2\", \"year\": 2020, \"genre\": \"Crime\", \"description\": \"A man that is a joke.\", \"rating\": 7.9 }"
 	public async Task UpdateMovie(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
-		var uParams = (Hashtable) props["urlParams"]!;
-		int id = int.TryParse((string) uParams["id"]!, out int i) ? i : -1;
+		var uParams = (NameValueCollection) props["urlParams"]!;
+		int id = int.TryParse(uParams["id"]!, out int i) ? i : -1;
 		var text = (string) props["req.text"]!;
 		var movie = JsonSerializer.Deserialize<Movie>(text, JsonUtils.DefaultOptions);
 		var result = await movieService.UpdateMovie(id, movie!);
@@ -70,8 +71,8 @@ public class MoviesController
 	// curl -X DELETE http://localhost:8080/movies/1
 	public async Task DeleteMovie(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
-		var uParams = (Hashtable) props["urlParams"]!;
-		int id = int.TryParse((string) uParams["id"]!, out int i) ? i : -1;
+		var uParams = (NameValueCollection) props["urlParams"]!;
+		int id = int.TryParse(uParams["id"]!, out int i) ? i : -1;
 
 		var result = await movieService.DeleteMovie(id);
 

@@ -1,12 +1,12 @@
-using Abcs.Http;
-
 namespace Smdb.Api.Movies;
+
+using Abcs.Http;
 
 public class MoviesRouter : HttpRouter
 {
 	public MoviesRouter(MoviesController moviesController)
 	{
-		UseRouteMatching();
+		UseParametrizedRouteMatching();
 		MapGet("/", moviesController.ReadMovies);
 		MapPost("/", HttpUtils.ReadRequestBodyAsText, moviesController.CreateMovie);
 		MapGet("/:id", moviesController.ReadMovie);

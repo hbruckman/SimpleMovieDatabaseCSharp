@@ -18,15 +18,17 @@ public class App
 		var mserv = new DefaultMovieService(mrepo);
 		var mctrl = new MoviesController(mserv);
 		var mRouter = new MoviesRouter(mctrl);
-
+		var apiRouter = new HttpRouter();
+		
 		router = new HttpRouter();
 		router.Use(HttpUtils.CentralizedErrorHandling);
+		router.Use(HttpUtils.StructuredLogging);
 		router.Use(HttpUtils.ParseRequestUrl);
 		router.Use(HttpUtils.ParseRequestQueryString);
-		router.Use(HttpUtils.StructuredLogging);
 		router.UseDefaultResponse();
-		router.UseRouteMatching();
-		router.UseRouter("/movies", mRouter);
+		router.UseParametrizedRouteMatching();
+		router.UseRouter("/api/v1", apiRouter);
+		apiRouter.UseRouter("/movies", mRouter);
 
 		string host = Configuration.Get<string>("HOST", "http://127.0.0.1");
 		string port = Configuration.Get<string>("PORT", "5000");

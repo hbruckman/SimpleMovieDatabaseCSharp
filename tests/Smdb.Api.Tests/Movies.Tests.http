@@ -5,27 +5,27 @@
 
 ### 
 # GET request – Fetch all movies
-GET {{baseUrl}}/movies?page=1&size=5
+GET {{baseUrl}}/api/v1/movies?page=1&size=5
 Accept: application/json
 
 ### 
 # GET request – Fetch all movies
-GET {{baseUrl}}/movies?page=2&size=10
+GET {{baseUrl}}/api/v1/movies?page=2&size=10
 Accept: application/json
 
 ### 
 # GET request – Fetch a single movie by ID
-GET {{baseUrl}}/movies/1
+GET {{baseUrl}}/api/v1/movies/1
 Accept: application/json
 
 ### 
 # GET request – Fetch a single movie by ID
-GET {{baseUrl}}/movies/{{movieId}}
+GET {{baseUrl}}/api/v1/movies/{{movieId}}
 Accept: application/json
 
 ### 
 # movie request – Create a new movie
-POST {{baseUrl}}/movies
+POST {{baseUrl}}/api/v1/movies
 Content-Type: application/json
 
 {
@@ -37,7 +37,7 @@ Content-Type: application/json
 
 ### 
 # PUT request – Update an existing movie
-PUT {{baseUrl}}/movies/{{movieId}}
+PUT {{baseUrl}}/api/v1/movies/{{movieId}}
 Content-Type: application/json
 
 {
@@ -49,4 +49,8 @@ Content-Type: application/json
 
 ### 
 # DELETE request – Remove a movie
-DELETE {{baseUrl}}/movies/1
+DELETE {{baseUrl}}/api/v1/movies/1
+
+### 
+# DELETE request – Remove a movie
+DELETE {{baseUrl}}/api/v1/movies/{{{movieId}}}

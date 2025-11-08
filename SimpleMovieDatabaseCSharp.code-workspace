@@ -7,10 +7,4 @@
 			"path": "../AbcSolutionsCSharp"
 		}
 	],
-	"settings": {
-		"csharp.debug.console": "integratedTerminal",
-		"[csharp]": {
-			"editor.defaultFormatter": "ms-dotnettools.csharp",
-		}
-	}
 }

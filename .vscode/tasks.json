@@ -7,7 +7,7 @@
       "command": "dotnet",
       "args": [
         "build",
-        "${workspaceFolder}/Smdb.Api/Smdb.Api.csproj",
+        "${workspaceFolder}/src/Smdb.Api/Smdb.Api.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
