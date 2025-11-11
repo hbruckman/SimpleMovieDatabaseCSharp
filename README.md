@@ -11,7 +11,7 @@ This codebase has the following characteristics:
 - Made for teaching purposes.
 - It implements the following architectures:
   - RESTful Endpoints Gateway (API)
-  - Server-Side rendered (SSR)
+  - Server-Side Rendered (SSR)
   - Client-Side Rendered (CSR)
   - Single Page Application (SPA)
  
