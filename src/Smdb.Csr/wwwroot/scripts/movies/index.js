@@ -1,8 +1,8 @@
-import { $, apiFetch, renderStatus, clearChildren, formatGenres, getQueryParam } from '/scripts/common.js';
+import { $, apiFetch, renderStatus, clearChildren, getQueryParam } from '/scripts/common.js';
 
 (async function initMoviesIndex() {
   const page = Math.max(1, Number(getQueryParam('page') || '1'));
-  const size = Math.min(100, Math.max(1, Number(getQueryParam('size') || '10')));
+  const size = Math.min(100, Math.max(1, Number(getQueryParam('size') || '9')));
 
   const listEl = $('#movie-list');
   const statusEl = $('#status');
@@ -23,9 +23,6 @@ import { $, apiFetch, renderStatus, clearChildren, formatGenres, getQueryParam }
 
         root.querySelector('.title').textContent = m.title ?? '—';
         root.querySelector('.year').textContent = String(m.year ?? '—');
-        root.querySelector('.rating').textContent = Number(m.rating ?? 0).toFixed(1);
-        root.querySelector('.genres').textContent = formatGenres(m.genres);
-
         root.querySelector('.btn-view').href = `/movies/view.html?id=${encodeURIComponent(m.id)}`;
         root.querySelector('.btn-edit').href = `/movies/edit.html?id=${encodeURIComponent(m.id)}`;
         root.querySelector('.btn-delete').dataset.id = m.id;

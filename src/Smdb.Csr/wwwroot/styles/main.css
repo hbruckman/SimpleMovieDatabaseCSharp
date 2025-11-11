@@ -246,3 +246,54 @@ footer {
 	color: var(--text);
 	min-height: 160px;
 }
+
+.page-size-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-size-container label {
+  font-weight: 500;
+  color: var(--text, #f1f5f9);
+}
+/* ===== Page Size Selector ===== */
+#page-size {
+  appearance: none;             /* remove native arrows (Chrome/Edge/Safari) */
+  -moz-appearance: none;        /* remove native arrows (Firefox) */
+  background-color: #0b1220;    /* dark background to match theme */
+  color: var(--text, #f1f5f9);  /* default text color or fallback */
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px 32px 8px 12px;   /* room for custom arrow */
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  outline: none;
+}
+
+/* Custom dropdown arrow */
+#page-size {
+  background-image: linear-gradient(45deg, transparent 50%, #94a3b8 50%),
+                    linear-gradient(135deg, #94a3b8 50%, transparent 50%);
+  background-position: calc(100% - 20px) calc(50% - 2px),
+                       calc(100% - 15px) calc(50% - 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+#page-size:hover {
+  border-color: #64748b;
+  background-color: #111827;
+}
+
+#page-size:focus {
+  border-color: #38bdf8; /* accent focus color */
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
+}
+
+#page-size option {
+  background-color: #0b1220;
+  color: #f1f5f9;
+}

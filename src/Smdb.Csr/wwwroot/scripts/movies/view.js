@@ -1,4 +1,4 @@
-import { $, apiFetch, renderStatus, getQueryParam, formatGenres } from '/scripts/common.js';
+import { $, apiFetch, renderStatus, getQueryParam } from '/scripts/common.js';
 
 (async function initMovieView() {
   const id = getQueryParam('id');
@@ -10,9 +10,7 @@ import { $, apiFetch, renderStatus, getQueryParam, formatGenres } from '/scripts
     $('#movie-id').textContent = m.id;
     $('#movie-title').textContent = m.title;
     $('#movie-year').textContent = m.year;
-    $('#movie-rating').textContent = Number(m.rating ?? 0).toFixed(1);
     $('#movie-desc').textContent = m.description || '—';
-    $('#movie-genres').textContent = formatGenres(m.genres);
     $('#edit-link').href = `/movies/edit.html?id=${encodeURIComponent(m.id)}`;
     renderStatus(statusEl, '', '');
   } catch (err) {

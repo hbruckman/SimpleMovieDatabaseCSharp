@@ -1,4 +1,3 @@
-// Shared utilities & API helpers (ES module)
 export const API_BASE = 'http://localhost:8080/api/v1';
 
 export const $ = (sel, el = document) => el.querySelector(sel);
@@ -38,37 +37,9 @@ export function clearChildren(el) {
   el.replaceChildren();
 }
 
-export function formatGenres(genres) {
-  if (!Array.isArray(genres) || genres.length === 0) return '—';
-  return genres.map(g => `${g.id ?? '∅'}:${g.name ?? '—'}`).join(', ');
-}
-
-export async function fetchAllGenres() {
-  try {
-    const genres = await apiFetch('/genres'); // GET /api/v1/genres
-    return genres.data ?? [];
-  } catch (err) {
-    return [];
-  }
-}
-
-export function populateGenresSelect(selectEl, genres, selectedIds = []) {
-  clearChildren(selectEl);
-  for (const g of genres) {
-    const opt = document.createElement('option');
-    opt.value = String(g.id);
-    opt.textContent = `${g.name}`;
-    if (selectedIds.includes(g.id)) opt.selected = true;
-    selectEl.appendChild(opt);
-  }
-}
-
 export function captureMovieForm(form) {
   const title = form.title.value.trim();
   const year = Number(form.year.value);
-  const rating = Number(form.rating.value);
   const description = form.description.value.trim();
-  const selectedIds = Array.from(form.genres.selectedOptions).map(o => Number(o.value));
-  const genres = selectedIds.map(id => ({ id }));
-  return { title, year, rating, description, genres };
+  return { title, year, description };
 }

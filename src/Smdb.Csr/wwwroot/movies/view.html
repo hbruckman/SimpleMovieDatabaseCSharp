@@ -5,6 +5,7 @@
   <title>View Movie • Simple Movie Database</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/styles/main.css" />
+  <script type="module" src="/scripts/movies/view.js" defer></script>
 </head>
 <body>
   <header>
@@ -19,20 +20,15 @@
   </header>
 
   <main class="container">
-    <div id="status" class="status">Loading…</div>
+    <div id="status" class="status">Loading...</div>
     <table class="table">
       <tbody>
         <tr><th>ID</th><td id="movie-id">—</td></tr>
         <tr><th>Title</th><td id="movie-title">—</td></tr>
         <tr><th>Year</th><td id="movie-year">—</td></tr>
-        <tr><th>Rating</th><td id="movie-rating">—</td></tr>
         <tr><th>Description</th><td id="movie-desc">—</td></tr>
-        <tr><th>Genres</th><td id="movie-genres">—</td></tr>
       </tbody>
     </table>
   </main>
-
-  <footer><nav><a href="/">Home</a></nav></footer>
-  <script type="module" src="/scripts/movies/view.js"></script>
 </body>
 </html>

@@ -1,10 +1,9 @@
-import { $, apiFetch, renderStatus, getQueryParam, fetchAllGenres, populateGenresSelect, captureMovieForm } from '/scripts/common.js';
+import { $, apiFetch, renderStatus, getQueryParam, captureMovieForm } from '/scripts/common.js';
 
 (async function initMovieEdit() {
   const id = getQueryParam('id');
   const form = $('#movie-form');
   const statusEl = $('#status');
-  const genresSelect = $('#genres-select');
 
   if (!id) {
     renderStatus(statusEl, 'err', 'Missing ?id in URL.');
@@ -13,17 +12,10 @@ import { $, apiFetch, renderStatus, getQueryParam, fetchAllGenres, populateGenre
   }
 
   try {
-    // Load movie first
     const m = await apiFetch(`/movies/${encodeURIComponent(id)}`);
     form.title.value = m.title ?? '';
     form.year.value = m.year ?? '';
-    form.rating.value = m.rating ?? '';
     form.description.value = m.description ?? '';
-
-    // Then load genres and preselect
-    const allGenres = await fetchAllGenres();
-    const selectedIds = (m.genres || []).map(g => g.id).filter(v => v != null);
-    populateGenresSelect(genresSelect, allGenres, selectedIds);
     renderStatus(statusEl, 'ok', 'Loaded movie. You can edit and save.');
   } catch (err) {
     renderStatus(statusEl, 'err', `Failed to load data: ${err.message}`);

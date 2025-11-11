@@ -1,17 +1,10 @@
-import { $, apiFetch, renderStatus, fetchAllGenres, populateGenresSelect, captureMovieForm } from '/scripts/common.js';
+import { $, apiFetch, renderStatus, captureMovieForm } from '/scripts/common.js';
 
 (async function initMovieAdd() {
   const form = $('#movie-form');
   const statusEl = $('#status');
-  const genresSelect = $('#genres-select');
 
-  try {
-    const genres = await fetchAllGenres();
-    populateGenresSelect(genresSelect, genres, []);
-    renderStatus(statusEl, 'ok', 'Genres loaded. Fill the form and submit.');
-  } catch (err) {
-    renderStatus(statusEl, 'err', `Failed to load genres: ${err.message}`);
-  }
+  renderStatus(statusEl, 'ok', 'New movie. You can edit and save.');
 
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
