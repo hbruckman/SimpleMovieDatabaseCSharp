@@ -1,4 +1,6 @@
 using Smdb.Core.Movies;
+using Smdb.Core.Genres;
+using Smdb.Core.MoviesGenres;
 
 public class MemoryDatabase
 {

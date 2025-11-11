@@ -1,4 +1,4 @@
-namespace Smdb.Core.Movies;
+namespace Smdb.Core.MoviesGenres;
 
 public class MovieGenre
 {
