@@ -8,12 +8,14 @@ using Smdb.Core.Movies;
 using Smdb.Core.Genres;
 using System.Net;
 
-public class App
+public class App : HttpServer
 {
-	private HttpRouter router;
-	private HttpListener server;
-
 	public App()
+	{
+		
+	}
+
+	public override void Init()
 	{
 		var db = new MemoryDatabase();
 
@@ -28,48 +30,17 @@ public class App
 		var genreRouter = new GenresRouter(genreCtrl);
 
 		var apiRouter = new HttpRouter();
-		
-		router = new HttpRouter();
+
 		router.Use(HttpUtils.StructuredLogging);
 		router.Use(HttpUtils.CentralizedErrorHandling);
-		router.UseDefaultResponse();
-		router.Use(HttpUtils.AddResponseCorsHeaders);
 		router.Use(HttpUtils.ParseRequestUrl);
 		router.Use(HttpUtils.ParseRequestQueryString);
+		router.Use(HttpUtils.AddResponseCorsHeaders);
 		router.UseParametrizedRouteMatching();
+		router.UseDefaultResponse();
+
 		router.UseRouter("/api/v1", apiRouter);
 		apiRouter.UseRouter("/movies", movieRouter);
 		apiRouter.UseRouter("/genres", genreRouter);
-
-		string host = Configuration.Get<string>("HOST", "http://127.0.0.1");
-		string port = Configuration.Get<string>("PORT", "5000");
-		string authority = $"{host}:{port}/";
-
-		server = new HttpListener();
-		server.Prefixes.Add(authority);
-
-		Console.WriteLine("Server started at " + authority);
-	}
-
-	public async Task Start()
-	{
-		server.Start();
-
-		while(server.IsListening)
-		{
-			HttpListenerContext ctx = await server.GetContextAsync();
-
-			_ = router.HandleContextAsync(ctx);
-		}
-	}
-
-	public void Stop()
-	{
-		if(server.IsListening)
-		{
-			server.Stop();
-			server.Close();
-			Console.WriteLine("Server stopped.");
-		}
 	}
 }
