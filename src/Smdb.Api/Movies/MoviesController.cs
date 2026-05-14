@@ -18,7 +18,7 @@ public class MoviesController
 
 	// curl -X GET "http://localhost:8080/api/v1/movies?page=2&size=10"
 
-	public async Task Read(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
+	public async Task List(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
 		int page = int.TryParse(req.QueryString["page"], out int p) ? p : 1;
 		int size = int.TryParse(req.QueryString["size"], out int s) ? s : 9;

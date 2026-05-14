@@ -7,10 +7,10 @@ public class ActorsRouter : HttpRouter
 	public ActorsRouter(ActorsController actorsController)
 	{
 		UseParametrizedRouteMatching();
-		MapGet("/", actorsController.ReadActors);
-		MapPost("/", HttpUtils.ReadRequestBodyAsText, actorsController.CreateActor);
-		MapGet("/:id", actorsController.ReadActor);
-		MapPut("/:id", HttpUtils.ReadRequestBodyAsText, actorsController.UpdateActor);
-		MapDelete("/:id", actorsController.DeleteActor);
+		MapGet("/", actorsController.List);
+		MapPost("/", HttpUtils.ReadRequestBodyAsText, actorsController.Create);
+		MapGet("/:id", actorsController.Read);
+		MapPut("/:id", HttpUtils.ReadRequestBodyAsText, actorsController.Update);
+		MapDelete("/:id", actorsController.Delete);
 	}
 }

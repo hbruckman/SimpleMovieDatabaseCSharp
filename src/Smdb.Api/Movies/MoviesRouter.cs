@@ -7,7 +7,7 @@ public class MoviesRouter : HttpRouter
 	public MoviesRouter(MoviesController moviesController)
 	{
 		UseParametrizedRouteMatching();
-		MapGet("/", moviesController.Read);
+		MapGet("/", moviesController.List);
 		MapPost("/", HttpUtils.ReadRequestBodyAsText, moviesController.Create);
 		MapGet("/:id", moviesController.Read);
 		MapPut("/:id", HttpUtils.ReadRequestBodyAsText, moviesController.Update);

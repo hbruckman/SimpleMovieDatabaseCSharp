@@ -7,10 +7,10 @@ public class UsersRouter : HttpRouter
 	public UsersRouter(UsersController usersController)
 	{
 		UseParametrizedRouteMatching();
-		MapGet("/", usersController.ReadUsers);
-		MapPost("/", HttpUtils.ReadRequestBodyAsText, usersController.CreateUser);
-		MapGet("/:id", usersController.ReadUser);
-		MapPut("/:id", HttpUtils.ReadRequestBodyAsText, usersController.UpdateUser);
-		MapDelete("/:id", usersController.DeleteUser);
+		MapGet("/", usersController.List);
+		MapPost("/", HttpUtils.ReadRequestBodyAsText, usersController.Create);
+		MapGet("/:id", usersController.Read);
+		MapPut("/:id", HttpUtils.ReadRequestBodyAsText, usersController.Update);
+		MapDelete("/:id", usersController.Delete);
 	}
 }

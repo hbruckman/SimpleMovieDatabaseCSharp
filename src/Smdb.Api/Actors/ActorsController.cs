@@ -18,12 +18,12 @@ public class ActorsController
 
 	// curl -X GET "http://localhost:8080/api/v1/actors?page=2&size=10"
 
-	public async Task ReadActors(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
+	public async Task List(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
 		int page = int.TryParse(req.QueryString["page"], out int p) ? p : 1;
 		int size = int.TryParse(req.QueryString["size"], out int s) ? s : 9;
 
-		var result = await actorService.ReadActors(page, size);
+		var result = await actorService.List(page, size);
 
 		await JsonUtils.SendPagedResultResponse(req, res, props, result, page, size);
 
@@ -32,11 +32,11 @@ public class ActorsController
 
 	// curl -X POST "http://localhost:8080/actors" -H "Content-Type: application/json" -d "{ \"id\": -1, \"title\": \"Inception\", \"year\": 2010, \"description\": \"A skilled thief who enters dreams to steal secrets.\" }"
 
-	public async Task CreateActor(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
+	public async Task Create(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
 		var text = (string)props["req.text"]!;
 		var actor = JsonSerializer.Deserialize<Actor>(text, JsonUtils.DefaultOptions);
-		var result = await actorService.CreateActor(actor!);
+		var result = await actorService.Create(actor!);
 
 		await JsonUtils.SendResultResponse(req, res, props, result);
 
@@ -45,12 +45,12 @@ public class ActorsController
 
 	// curl -X GET "http://localhost:8080/actors/1"
 
-	public async Task ReadActor(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
+	public async Task Read(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
 		var uParams = (NameValueCollection)props["urlParams"]!;
 		int id = int.TryParse(uParams["id"]!, out int i) ? i : -1;
 
-		var result = await actorService.ReadActor(id);
+		var result = await actorService.Read(id);
 
 		await JsonUtils.SendResultResponse(req, res, props, result);
 
@@ -59,13 +59,13 @@ public class ActorsController
 
 	// curl -X PUT "http://localhost:8080/actors/1" -H "Content-Type: application/json" -d "{ \"title\": \"Joker 2\", \"year\": 2020, \"description\": \"A man that is a joke.\" }"
 
-	public async Task UpdateActor(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
+	public async Task Update(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
 		var uParams = (NameValueCollection)props["urlParams"]!;
 		int id = int.TryParse(uParams["id"]!, out int i) ? i : -1;
 		var text = (string)props["req.text"]!;
 		var actor = JsonSerializer.Deserialize<Actor>(text, JsonUtils.DefaultOptions);
-		var result = await actorService.UpdateActor(id, actor!);
+		var result = await actorService.Update(id, actor!);
 
 		await JsonUtils.SendResultResponse(req, res, props, result);
 
@@ -74,12 +74,12 @@ public class ActorsController
 
 	// curl -X DELETE http://localhost:8080/actors/1
 
-	public async Task DeleteActor(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
+	public async Task Delete(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
 		var uParams = (NameValueCollection)props["urlParams"]!;
 		int id = int.TryParse(uParams["id"]!, out int i) ? i : -1;
 
-		var result = await actorService.DeleteActor(id);
+		var result = await actorService.Delete(id);
 
 		await JsonUtils.SendResultResponse(req, res, props, result);
 

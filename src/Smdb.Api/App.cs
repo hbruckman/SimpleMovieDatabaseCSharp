@@ -2,6 +2,7 @@
 using Abcs.Http;
 using Smdb.Api.Movies;
 using Smdb.Core.Movies;
+using Smdb.Core.Shared;
 
 namespace Smdb.Api;
 
